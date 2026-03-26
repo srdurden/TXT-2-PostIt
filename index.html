@@ -30,56 +30,31 @@
     }
 
     .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
       background: #f0f1f5;
       border-right: 1px solid #dadde4;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 18px;
-      gap: 26px;
-    }
-
-    .sidebar-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #9ca7b9;
-    }
-
-    .add-card {
-      width: 152px;
-      border-radius: 22px;
-      background: #e9ebf1;
-      box-shadow: inset 0 1px 0 #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 10px;
+      justify-content: flex-start;
+      padding: 18px 18px 24px;
+      gap: 18px;
     }
 
     .add-btn {
-      width: 86px;
-      height: 86px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      border: 2px solid #4c5260;
+      border: 1px solid #202226;
       background: linear-gradient(#24262c, #15171b);
       color: white;
-      font-size: 52px;
+      font-size: 34px;
       line-height: 1;
       cursor: pointer;
       box-shadow: 0 7px 14px rgba(0,0,0,.25);
-    }
-
-    .add-text {
-      text-align: center;
-      font-size: 38px;
-      line-height: 1.05;
-      font-weight: 650;
-      transform: scale(.45);
-      transform-origin: top center;
-      margin-top: -22px;
-      margin-bottom: -22px;
+      z-index: 3;
     }
 
     .palette-dot {
@@ -87,6 +62,22 @@
       height: 20px;
       border-radius: 50%;
       opacity: .9;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,.25);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .palette-dot:hover {
+      transform: scale(1.12);
+      box-shadow: 0 4px 9px rgba(0,0,0,.3);
+    }
+
+    .palette-nav {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     .main {
@@ -95,8 +86,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
+      grid-template-columns: 1fr;
       align-items: center;
       margin-bottom: 24px;
     }
@@ -107,8 +97,8 @@
 
     .search input {
       width: 100%;
-      border: 1px solid #d3d9e1;
-      background: #f3f4f7;
+      border: 2px solid #2f78d6;
+      background: #f8fbff;
       border-radius: 14px;
       padding: 14px 16px 14px 52px;
       font-size: 36px;
@@ -116,6 +106,14 @@
       transform-origin: left center;
       height: 52px;
       color: #3a4453;
+      box-shadow: 0 0 0 3px rgba(47, 120, 214, .12);
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .search input:focus {
+      outline: none;
+      border-color: #1f64bb;
+      box-shadow: 0 0 0 4px rgba(47, 120, 214, .2);
     }
 
     .search .icon {
@@ -125,17 +123,6 @@
       transform: translateY(-50%);
       font-size: 24px;
       opacity: .6;
-    }
-
-    .settings {
-      border: none;
-      background: linear-gradient(#4f9ae4, #2c72c9);
-      color: #fff;
-      border-radius: 10px;
-      font-size: 30px;
-      padding: 12px 18px;
-      cursor: pointer;
-      box-shadow: var(--shadow);
     }
 
     .notes {
@@ -198,11 +185,34 @@
     .copy-btn {
       background: linear-gradient(#4c8de0, #2f70cf);
       color: #fff;
-      padding: 9px 14px;
-      font-size: 16px;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      font-size: 18px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      position: relative;
+    }
+
+    .copy-btn.copied {
+      background: linear-gradient(#40b06a, #2f8f54);
+    }
+
+    .copy-btn.copied::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.1);
+      border-radius: 8px;
+      animation: copiedFlash .5s ease;
+    }
+
+    @keyframes copiedFlash {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .danger {
@@ -234,28 +244,24 @@
     @media (max-width: 950px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar {
+        position: static;
+        height: auto;
         flex-direction: row;
         justify-content: center;
         border-right: none;
         border-bottom: 1px solid #dadde4;
       }
-      .sidebar-dot, .palette-dot { display: none; }
-      .add-card { width: 200px; }
+      .palette-nav {
+        flex-direction: row;
+      }
     }
   </style>
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <div class="sidebar-dot"></div>
-      <div class="add-card">
-        <button class="add-btn" id="loadButton" aria-label="Cargar notas">+</button>
-        <div class="add-text">Añadir<br />nueva nota</div>
-      </div>
-      <div class="palette-dot" style="background:#efb443"></div>
-      <div class="palette-dot" style="background:#f0b16f"></div>
-      <div class="palette-dot" style="background:#6ac1ca"></div>
-      <div class="palette-dot" style="background:#b8cf74"></div>
+      <button class="add-btn" id="loadButton" aria-label="Añadir notas">+</button>
+      <nav id="paletteNav" class="palette-nav" aria-label="Ir a notas por color"></nav>
     </aside>
 
     <main class="main">
@@ -264,7 +270,6 @@
           <span class="icon">🔍</span>
           <input id="searchInput" type="search" placeholder="Buscar..." />
         </label>
-        <button class="settings" aria-label="Ajustes">⚙️</button>
       </div>
 
       <section id="notes" class="notes"></section>
@@ -277,6 +282,7 @@
     const loadButton = document.getElementById('loadButton');
     const searchInput = document.getElementById('searchInput');
     const notesContainer = document.getElementById('notes');
+    const paletteNav = document.getElementById('paletteNav');
 
     const noteColors = [
       { header: '#f6ebc7', body: '#fdf7e8' },
@@ -296,14 +302,15 @@
       const files = Array.from(event.target.files || []).filter(file => file.name.toLowerCase().endsWith('.txt'));
       if (!files.length) return;
 
-      const loaded = await Promise.all(files.map(async (file) => {
+      const loaded = await Promise.all(files.map(async (file, index) => {
         const content = await file.text();
         const clean = content.replace(/\r\n/g, '\n').trim();
         return {
           id: crypto.randomUUID(),
           title: file.name.replace(/\.txt$/i, '') || 'Nota sin título',
           content: clean || '(Archivo vacío)',
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          colorIndex: (notes.length + index) % noteColors.length
         };
       }));
 
@@ -330,7 +337,7 @@
       renderNotes();
     }
 
-    async function copyNote(id) {
+    async function copyNote(id, button) {
       const note = notes.find(n => n.id === id);
       if (!note) return;
       try {
@@ -342,6 +349,10 @@
         temp.select();
         document.execCommand('copy');
         temp.remove();
+      }
+      if (button) {
+        button.classList.add('copied');
+        window.setTimeout(() => button.classList.remove('copied'), 700);
       }
     }
 
@@ -363,7 +374,7 @@
 
       if (action === 'up') moveNote(id, 'up');
       if (action === 'down') moveNote(id, 'down');
-      if (action === 'copy') copyNote(id);
+      if (action === 'copy') copyNote(id, button);
       if (action === 'delete') deleteNote(id);
     });
 
@@ -371,6 +382,22 @@
       const editor = event.target.closest('[data-editor-id]');
       if (!editor) return;
       updateNote(editor.dataset.editorId, editor.innerText);
+    });
+
+    function renderPaletteAnchors() {
+      paletteNav.innerHTML = noteColors.map((color, index) => (
+        `<button class="palette-dot" style="background:${color.header}" data-color-anchor="${index}" aria-label="Ir a notas del color ${index + 1}"></button>`
+      )).join('');
+    }
+
+    paletteNav.addEventListener('click', (event) => {
+      const dot = event.target.closest('[data-color-anchor]');
+      if (!dot) return;
+      const colorIndex = Number(dot.dataset.colorAnchor);
+      const targetNote = notesContainer.querySelector(`.note[data-color-index="${colorIndex}"]`);
+      if (targetNote) {
+        targetNote.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
 
     function renderNotes() {
@@ -384,14 +411,14 @@
         return;
       }
 
-      notesContainer.innerHTML = filtered.map((note, i) => {
-        const color = noteColors[i % noteColors.length];
+      notesContainer.innerHTML = filtered.map((note) => {
+        const color = noteColors[note.colorIndex % noteColors.length];
         return `
-          <article class="note" style="background:${color.body}">
+          <article class="note" id="note-${note.id}" data-color-index="${note.colorIndex}" style="background:${color.body}">
             <header class="note-header" style="background:${color.header}">
               <span>${escapeHtml(note.title)}</span>
               <div>
-                <button class="small copy-btn" data-action="copy" data-id="${note.id}">📋 Copiar</button>
+                <button class="small copy-btn" data-action="copy" data-id="${note.id}" aria-label="Copiar contenido">📋</button>
                 <button class="small danger" data-action="delete" data-id="${note.id}" aria-label="Borrar">✖</button>
               </div>
             </header>
@@ -407,6 +434,7 @@
       }).join('');
     }
 
+    renderPaletteAnchors();
     renderNotes();
   </script>
 </body>
